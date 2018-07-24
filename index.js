@@ -2,6 +2,7 @@ var Notify = require('pull-notify')
 var Dijkstra = require('dynamic-dijkstra')
 var simple = require('dynamic-dijkstra/simple')
 var Once = require('pull-stream/sources/once')
+//var Obv = require('obv')
 
 function isObject (o) {
   return o && 'object' === typeof o
@@ -14,11 +15,12 @@ function isEmpty (o) {
 
 module.exports = function (options) {
   var d = Dijkstra(simple)
-
   var byName = {}, layers = [], notify = Notify(), listeners = []
   var graph = {}, _graph = {}, hops = {}
+  hops[options.start] = simple.initial()
 
   return {
+    //graph: graphObv,
     createLayer: function (name) {
       var index = layers.push({}) - 1
       byName[name || 'unnamed_'+index] = index
@@ -36,7 +38,6 @@ module.exports = function (options) {
           })
           _graph = d.reverse(graph)
           hops = d.traverse(graph, _graph, options.max, options.start)
-          console.log("HOPS", hops)
           notify(hops)
         }
         else {
@@ -53,9 +54,9 @@ module.exports = function (options) {
 
           //update the main graph, if a higher layer doesn't override this.
           var diff = d.update(graph, _graph, hops, options.max, options.start, from, to, value)
-          if(diff && !isEmpty(diff))
-            notify(diff)
+          if(diff && !isEmpty(diff)) notify(diff)
         }
+        return layers[index] //return graph from this layer
       }
 
     },
@@ -65,7 +66,7 @@ module.exports = function (options) {
         listeners.splice(listeners.indexOf(fn), 1)
       }
     },
-    hops: function (opts) {
+    getHops: function (opts) {
       return hops
     },
     hopStream: function (opts) {
@@ -89,7 +90,5 @@ module.exports = function (options) {
     }
   }
 }
-
-
 
 

@@ -16,17 +16,27 @@ function isEmpty (o) {
 module.exports = function (options) {
   var d = Dijkstra(simple)
   var byName = {}, layers = [], notify = Notify(), listeners = []
-  var graph = {}, _graph = {}, hops = {}
+  var graph = {}, _graph = {}, hops = {}, ready = 0, readyListeners = []
   hops[options.start] = simple.initial()
+
+  var isReady = {}
 
   return {
     //graph: graphObv,
     createLayer: function (name) {
       var index = layers.push({}) - 1
-      byName[name || 'unnamed_'+index] = index
-
+      name = name || 'unnamed_'+index
+      byName[name] = index
+      ready ++
       return function update (from, to, value) {
         if(isObject(from)) {
+          if(!isReady[name]) {
+            isReady[name] = true
+            ready --
+            if(ready === 0) {
+              while(readyListeners.length) readyListeners.shift()()
+            }
+          }
           var g = from
           layers[index] = g
           layers.forEach(function (g) {
@@ -59,6 +69,11 @@ module.exports = function (options) {
         return layers[index] //return graph from this layer
       }
 
+    },
+    onReady: function (fn) {
+      if(ready == 0) fn()
+      else
+        readyListeners.push(fn)
     },
     onEdge: function (fn) {
       listeners.push(fn)

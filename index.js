@@ -2,7 +2,7 @@ var Notify = require('pull-notify')
 var Dijkstra = require('dynamic-dijkstra')
 var simple = require('dynamic-dijkstra/simple')
 var Once = require('pull-stream/sources/once')
-//var Obv = require('obv')
+var pCont = require('pull-cont')
 
 function isObject (o) {
   return o && 'object' === typeof o
@@ -13,16 +13,23 @@ function isEmpty (o) {
   return true
 }
 
+function isString (s) {
+  return 'string' === typeof s
+}
+
 module.exports = function (options) {
   var d = Dijkstra(simple)
   var byName = {}, layers = [], notify = Notify(), listeners = []
   var graph = {}, _graph = {}, hops = {}, ready = 0, readyListeners = []
+  var layered
   hops[options.start] = simple.initial()
-
+  if(isNaN(options.max))
+    throw new Error('options.max must be provided')
+  if(!isString(options.start))
+    throw new Error('options.start must be provided')
   var isReady = {}
 
-  return {
-    //graph: graphObv,
+  return layered = {
     createLayer: function (name) {
       var index = layers.push({}) - 1
       name = name || 'unnamed_'+index
@@ -81,8 +88,31 @@ module.exports = function (options) {
         listeners.splice(listeners.indexOf(fn), 1)
       }
     },
+    //find everyone that follows you - reverse!
     getHops: function (opts) {
-      return hops
+      opts = opts || {}
+      var _start = opts && opts.start || options.start
+      var _max = opts.max || options.max
+      if(opts.reverse === true) {
+        return d.traverse(_graph, graph, _max, _start)
+      }
+      else {
+        if(_start === options.start) {
+          if(_max === options.max)
+            return hops
+          else if(_max < options.max) {
+            var hops2 = {}
+            for(var k in hops)
+              if(hops[k] <= _max)
+                hops2[k] = hops[k]
+            return hops2
+          }
+          else
+            return d.traverse(graph, _graph, _max, _start)
+        }
+        else
+          return d.traverse(grapd, _graph, _max, _start)
+      }
     },
     hopStream: function (opts) {
       opts = opts || {}
@@ -90,9 +120,14 @@ module.exports = function (options) {
       var old = opts.old !== false
       var source
       if(live) {
-        source = notify.listen()
-        if(old && !isEmpty(hops))
-          source.push(hops)
+        return pCont(function (cb) {
+          layered.onReady(function () {
+            source = notify.listen()
+            if(old && !isEmpty(hops))
+              source.push(hops)
+            cb(null, source)
+          })
+        })
       }
       else
         source = Once(hops)
@@ -105,5 +140,4 @@ module.exports = function (options) {
     }
   }
 }
-
 

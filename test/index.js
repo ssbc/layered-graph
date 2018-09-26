@@ -36,6 +36,9 @@ tape('simple', function (t) {
   addOver('B', 'C', 1)
 
   t.deepEqual(G.getHops(), {A: 0, B: 1, C: 2})
+  t.deepEqual(G.getHops({max:1}), {A: 0, B: 1})
+  t.deepEqual(G.getHops({reverse: true, start: 'B'}), {A: 1, B: 0})
+  t.deepEqual(G.getHops({max:4}), {A: 0, B: 1, C: 2})
 
   t.equal(count, 2)
   t.deepEqual(last, {C: 2})
@@ -50,4 +53,5 @@ tape('simple', function (t) {
 
   t.end()
 })
+
 

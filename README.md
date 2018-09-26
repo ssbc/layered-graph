@@ -24,9 +24,16 @@ and then new edges. Each layer must be initialized.
 returns the current layered graph merged into one layer.
 the graph is just a two level js object {}, structure `{<id_a>:{<id_b>: <weight>},...}`
 
-### layers.getHops() => {<id>: <hops>}
+### layers.getHops(opts?) => {<id>: <hops>}
 
 return a hops map, of each peer id, to their hop length from `start` (passed to constructor)
+If `opts` is provided, it accepts the following fields:
+`reverse`: return hops _to_ `start` instead of from `start`.
+`start`: calculate hops from/to a different node.
+`max`: set a different max distance.
+If the `max` is smaller than the default passed to the constructor, the output will be fastest,
+because it will just copy the cached value, but skip nodes at a greater distance than `max`.
+
 
 ### layers.hopStream() => Source
 
@@ -45,4 +52,5 @@ call `fn` when an edge is added or removed from the graph.
 ## License
 
 MIT
+
 

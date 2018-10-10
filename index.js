@@ -111,7 +111,7 @@ module.exports = function (options) {
             return d.traverse(graph, _graph, _max, _start)
         }
         else
-          return d.traverse(grapd, _graph, _max, _start)
+          return d.traverse(graph, _graph, _max, _start)
       }
     },
     hopStream: function (opts) {

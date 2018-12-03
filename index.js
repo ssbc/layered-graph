@@ -37,13 +37,6 @@ module.exports = function (options) {
       ready ++
       return function update (from, to, value) {
         if(isObject(from)) {
-          if(!isReady[name]) {
-            isReady[name] = true
-            ready --
-            if(ready === 0) {
-              while(readyListeners.length) readyListeners.shift()()
-            }
-          }
           var g = from
           layers[index] = g
           layers.forEach(function (g) {
@@ -56,6 +49,13 @@ module.exports = function (options) {
           _graph = d.reverse(graph)
           hops = d.traverse(graph, _graph, options.max, options.start)
           notify(hops)
+          if(!isReady[name]) {
+            isReady[name] = true
+            ready --
+            if(ready === 0) {
+              while(readyListeners.length) readyListeners.shift()()
+            }
+          }
         }
         else {
           layers[index][from] = layers[index][from] || {}

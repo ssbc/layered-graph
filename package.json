@@ -10,7 +10,8 @@
   "dependencies": {
     "dynamic-dijkstra": "^1.0.0",
     "pull-cont": "^0.1.1",
-    "pull-notify": "^0.1.1"
+    "pull-notify": "^0.1.1",
+    "pull-stream": "^3.6.9"
   },
   "devDependencies": {},
   "scripts": {

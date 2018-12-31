@@ -54,4 +54,39 @@ tape('simple', function (t) {
   t.end()
 })
 
+tape('null causes to fall through to next layer', function (t) {
+
+  var ready = false
+  var G = require('../')({max: 3, start: 'A'})
+
+  var addBase = G.createLayer('base')
+
+  G.onReady(function () {
+    ready = true
+  })
+
+  t.equal(ready, false)
+
+  addBase({
+    A: {B: 1}
+  })
+
+  t.deepEqual(G.getHops(), {A: 0, B: 1})
+
+  var addOver = G.createLayer('override')
+  addOver({})
+  addOver('A', 'B', 0.1)
+
+  t.deepEqual(G.getHops(), {A: 0, B: 0.1})
+  addOver('A', 'B', 1)
+  t.deepEqual(G.getHops(), {A: 0, B: 1})
+
+  addOver('A', 'B', 2)
+  t.deepEqual(G.getHops(), {A: 0, B: 2})
+
+  addOver('A', 'B', null)
+  t.deepEqual(G.getHops(), {A: 0, B: 1})
+
+  t.end()
+})
 

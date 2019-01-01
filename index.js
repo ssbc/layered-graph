@@ -129,10 +129,14 @@ module.exports = function (options) {
           })
         })
       }
-      else
-        source = Once(hops)
-
-      return source
+      else {
+        return pCont(function (cb) {
+          layered.onReady(function () {
+            source = Once(hops)
+            cb(null, source)
+          })
+        })
+      }
     },
     getGraph: function (name) {
       if(name == null) return graph

@@ -65,10 +65,20 @@ module.exports = function (options) {
             for(var i = 0; i < listeners.length; i++)
               listeners[i](from, to, value)
 
+          //check if higher layer overrides this
           for(var i = index + 1; i < layers.length; i++)
             if(layers[i][from] && layers[i][from][to] != null)
               return
 
+          // for a remove,
+          // check if there is a higher layer to fall back to
+          if(value === null) {
+            for(var i = index - 1; i >= 0; i--)
+              if(layers[i][from] && layers[i][from][to] != null) {
+                value = layers[i][from][to]
+                break;
+              }
+          }
           //update the main graph, if a higher layer doesn't override this.
           var diff = d.update(graph, _graph, hops, options.max, options.start, from, to, value)
           if(diff && !isEmpty(diff)) notify(diff)

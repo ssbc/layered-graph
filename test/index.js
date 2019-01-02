@@ -87,6 +87,10 @@ tape('null causes to fall through to next layer', function (t) {
   addOver('A', 'B', null)
   t.deepEqual(G.getHops(), {A: 0, B: 1})
 
+  addBase('A', 'B', null)
+
+  t.deepEqual(G.getHops(), {A: 0})
+
   t.end()
 })
 

@@ -1,12 +1,15 @@
 {
   "name": "layered-graph",
-  "description": "",
+  "description": "Multigraph data structure that collapses to a simple graph",
   "version": "1.1.3",
-  "homepage": "https://github.com/dominictarr/layered-graph",
+  "homepage": "https://github.com/ssbc/layered-graph",
   "repository": {
     "type": "git",
-    "url": "git://github.com/dominictarr/layered-graph.git"
+    "url": "git://github.com/ssbc/layered-graph.git"
   },
+  "files": [
+    "index.js"
+  ],
   "dependencies": {
     "dynamic-dijkstra": "^1.0.0",
     "pull-cont": "^0.1.1",
@@ -14,11 +17,27 @@
     "pull-stream": "^3.6.9"
   },
   "devDependencies": {
-    "tape": "^4.9.1"
+    "c8": "^7.12.0",
+    "husky": "^4.3.0",
+    "prettier": "^2.7.1",
+    "pretty-quick": "^3.1.3",
+    "tap-arc": "~0.3.5",
+    "tape": "^5.5.0"
   },
   "scripts": {
-    "test": "set -e; for t in test/*.js; do node $t; done"
+    "test": "tape test/*.js | tap-arc --bail",
+    "coverage": "c8 --reporter=lcov npm test",
+    "format-code": "prettier --write \"*.js\" \"test/*.js\"",
+    "format-code-staged": "pretty-quick --staged --pattern \"*.js\" --pattern \"test/*.js\""
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "npm run format-code-staged"
+    }
   },
   "author": "Dominic Tarr <dominic.tarr@gmail.com> (http://dominictarr.com)",
+  "contributors": [
+    "Andre 'Staltz' Medeiros <contact@staltz.com>"
+  ],
   "license": "MIT"
 }

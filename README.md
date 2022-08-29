@@ -1,11 +1,11 @@
 # layered-graph
 
-compose a graph out of multiple sublayers, and in particular,
-expose a dynamically updating shortest paths calculation.
+Compose a graph out of multiple sublayers, and in particular, expose a
+dynamically updating shortest paths calculation.
 
-later added layers override earlier layers.
+Later added layers override earlier layers.
 
-## api: LayeredGraph({start, max}) => layers
+## API: LayeredGraph({start, max}) => layers
 
 `start` is a node id that is the "root" of the graph.
 hops are [calculated](https://github.com/dominictarr/dynamic-dijkstra) from this node.

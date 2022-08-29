@@ -17,7 +17,7 @@ function isString(s) {
   return 'string' === typeof s
 }
 
-module.exports = function (opts) {
+module.exports = function (options) {
   var d = Dijkstra(simple)
   var byName = {}
   var layers = []
@@ -29,9 +29,10 @@ module.exports = function (opts) {
   var ready = 0
   var readyListeners = []
   var layered
-  hops[opts.start] = simple.initial()
-  if (isNaN(opts.max)) throw new Error('options.max must be provided')
-  if (!isString(opts.start)) throw new Error('options.start must be provided')
+  hops[options.start] = simple.initial()
+  if (isNaN(options.max)) throw new Error('options.max must be provided')
+  if (!isString(options.start))
+    throw new Error('options.start must be provided')
   var isReady = {}
 
   return (layered = {
@@ -52,7 +53,7 @@ module.exports = function (opts) {
               }
           })
           _graph = d.reverse(graph)
-          hops = d.traverse(graph, _graph, opts.max, opts.start)
+          hops = d.traverse(graph, _graph, options.max, options.start)
           notify(hops)
           if (!isReady[name]) {
             isReady[name] = true
@@ -87,8 +88,8 @@ module.exports = function (opts) {
             graph,
             _graph,
             hops,
-            opts.max,
-            opts.start,
+            options.max,
+            options.start,
             from,
             to,
             value
@@ -111,14 +112,14 @@ module.exports = function (opts) {
     //find everyone that follows you - reverse!
     getHops: function (opts) {
       opts = opts || {}
-      var _start = (opts && opts.start) || opts.start
-      var _max = opts.max || opts.max
+      var _start = (opts && opts.start) || options.start
+      var _max = opts.max || options.max
       if (opts.reverse === true) {
         return d.traverse(_graph, graph, _max, _start)
       } else {
-        if (_start === opts.start) {
-          if (_max === opts.max) return hops
-          else if (_max < opts.max) {
+        if (_start === options.start) {
+          if (_max === options.max) return hops
+          else if (_max < options.max) {
             var hops2 = {}
             for (var k in hops) if (hops[k] <= _max) hops2[k] = hops[k]
             return hops2

@@ -53,6 +53,9 @@ tape('simple', function (t) {
   t.equal(count, 3)
   t.deepEqual(last, { C: -1 })
 
+  G.reset()
+  t.deepEqual(G.getGraph(), {})
+
   t.end()
 })
 

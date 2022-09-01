@@ -49,6 +49,11 @@ call `fn` back once all layers have been initialized, or immediately if they are
 
 call `fn` when an edge is added or removed from the graph.
 
+### layers.reset()
+
+Clear the state held by this instance, basically going back to how things were
+when you called `LayeredGraph({start, max})`.
+
 ## License
 
 MIT

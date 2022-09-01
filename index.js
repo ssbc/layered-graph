@@ -153,5 +153,15 @@ module.exports = function (options) {
       if (name == null) return graph
       else return layers[byName[name]]
     },
+    reset: function () {
+      byName = {}
+      layers = []
+      graph = {}
+      _graph = {}
+      hops = {}
+      ready = 0
+      hops[options.start] = simple.initial()
+      isReady = {}
+    },
   })
 }
